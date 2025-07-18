@@ -2,8 +2,6 @@
 
 An attempt at automating McDonald's customer satisfaction surveys and retrieving validation codes for receipt offers.
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/nick-bui19/mcdonalds-survey-solver)
-
 ## Features
 
 - **Automated Survey Completion** - Automatically answers all survey questions with positive responses
