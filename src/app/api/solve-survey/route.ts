@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { validateReceiptCode } from '@/lib/validation';
 import { TEST_CODES_INFO } from '@/lib/test-codes';
+import { SurveyAutomation } from '@/lib/survey-automation';
 import type { SolveSurveyRequest, SolveSurveyResponse } from '@/types/api';
 
 export async function POST(request: NextRequest) {
@@ -63,17 +64,42 @@ export async function POST(request: NextRequest) {
       console.log('Validation code being returned:', result.validationCode);
       console.log('===================');
     } else {
-      // Real codes - provide helpful message for users
-      console.log('=== REAL CODE ATTEMPTED ===');
+      // Real codes - use actual automation
+      console.log('=== REAL CODE PROCESSING ===');
       console.log('Formatted code:', formattedCode);
       console.log('NODE_ENV:', process.env.NODE_ENV);
       console.log('Timestamp:', new Date().toISOString());
       console.log('==============================');
 
-      result = {
-        success: false,
-        error: `Real receipt codes are not currently supported in the web version. Please use the test codes provided, or visit mcdvoice.com to complete your survey manually with code: ${formattedCode}`,
-      };
+      const automation = new SurveyAutomation();
+
+      try {
+        await automation.initialize();
+        const automationResult = await automation.solveSurvey(formattedCode);
+
+        if (automationResult.success) {
+          result = {
+            success: true,
+            validationCode: automationResult.validationCode,
+            expirationDate: automationResult.expirationDate,
+            completionTime: automationResult.completionTime,
+          };
+        } else {
+          result = {
+            success: false,
+            error: automationResult.error || 'Survey automation failed',
+          };
+        }
+      } catch (error) {
+        console.error('Automation error:', error);
+        result = {
+          success: false,
+          error:
+            'Survey automation failed. Please try again or visit mcdvoice.com manually.',
+        };
+      } finally {
+        await automation.cleanup();
+      }
     }
 
     const response: SolveSurveyResponse = {

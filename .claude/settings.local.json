@@ -14,7 +14,9 @@
       "Bash(npx playwright:*)",
       "Bash(git reset:*)",
       "Bash(rm:*)",
-      "Bash(npm uninstall:*)"
+      "Bash(npm uninstall:*)",
+      "Bash(docker build:*)",
+      "Bash(node:*)"
     ],
     "deny": []
   }
