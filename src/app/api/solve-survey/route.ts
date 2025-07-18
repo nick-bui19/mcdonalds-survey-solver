@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { validateReceiptCode } from '@/lib/validation';
-import { ServerlessSurveyAutomation } from '@/lib/serverless-automation';
 import { TEST_CODES_INFO } from '@/lib/test-codes';
 import type { SolveSurveyRequest, SolveSurveyResponse } from '@/types/api';
 
@@ -64,40 +63,17 @@ export async function POST(request: NextRequest) {
       console.log('Validation code being returned:', result.validationCode);
       console.log('===================');
     } else {
-      // Real code processing with serverless-compatible automation
-      console.log('=== REAL CODE PROCESSING ===');
+      // Real codes - provide helpful message for users
+      console.log('=== REAL CODE ATTEMPTED ===');
       console.log('Formatted code:', formattedCode);
       console.log('NODE_ENV:', process.env.NODE_ENV);
       console.log('Timestamp:', new Date().toISOString());
       console.log('==============================');
 
-      try {
-        const automation = new ServerlessSurveyAutomation();
-        const startTime = Date.now();
-        result = await automation.solveSurvey(formattedCode);
-        const endTime = Date.now();
-
-        console.log('=== REAL CODE RESULT ===');
-        console.log('Success:', result.success);
-        console.log('Validation code:', result.validationCode);
-        console.log('Processing time (ms):', endTime - startTime);
-        console.log('Expiration date:', result.expirationDate);
-        if (result.error) console.log('Error:', result.error);
-        console.log('Timestamp:', new Date().toISOString());
-        console.log('========================');
-      } catch (error) {
-        console.error('=== AUTOMATION ERROR ===');
-        console.error('Code attempted:', formattedCode);
-        console.error('Error:', error);
-        console.error('Timestamp:', new Date().toISOString());
-        console.error('========================');
-
-        result = {
-          success: false,
-          error:
-            'Survey automation failed. Please try again or check if your receipt code is valid.',
-        };
-      }
+      result = {
+        success: false,
+        error: `Real receipt codes are not currently supported in the web version. Please use the test codes provided, or visit mcdvoice.com to complete your survey manually with code: ${formattedCode}`,
+      };
     }
 
     const response: SolveSurveyResponse = {
