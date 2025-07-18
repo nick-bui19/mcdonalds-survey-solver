@@ -47,8 +47,8 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install Node.js dependencies
-RUN npm ci --only=production
+# Install ALL dependencies (including dev dependencies for build)
+RUN npm ci
 
 # Install Playwright browsers
 RUN npx playwright install chromium
@@ -58,6 +58,9 @@ COPY . .
 
 # Build the Next.js application
 RUN npm run build
+
+# Remove dev dependencies after build
+RUN npm prune --production
 
 # Expose the port
 EXPOSE 3000
