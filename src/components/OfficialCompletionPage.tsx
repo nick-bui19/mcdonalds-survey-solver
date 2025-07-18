@@ -15,6 +15,16 @@ export function OfficialCompletionPage({
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content - matches exactly */}
           <div className="lg:col-span-2">
+            <div className="bg-yellow-100 border border-yellow-300 rounded-lg p-4 mb-6">
+              <h2 className="text-sm font-semibold text-yellow-800 mb-1">
+                🎓 Demo Completed Successfully!
+              </h2>
+              <p className="text-xs text-yellow-700">
+                This is a simulated validation code. Real McDonald&apos;s
+                automation would be blocked by their security systems.
+              </p>
+            </div>
+
             <h1 className="text-2xl font-bold text-black mb-6">
               Thank you for completing this survey.
             </h1>
@@ -56,12 +66,22 @@ export function OfficialCompletionPage({
               help us continue improving our business.
             </p>
 
-            <button
-              onClick={onStartOver}
-              className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded text-sm font-medium"
-            >
-              Complete Another Survey
-            </button>
+            <div className="flex gap-4">
+              <button
+                onClick={onStartOver}
+                className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded text-sm font-medium"
+              >
+                Try Another Demo
+              </button>
+              <a
+                href="https://mcdvoice.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded text-sm font-medium"
+              >
+                Visit Real Survey Site
+              </a>
+            </div>
           </div>
 
           {/* Sidebar - simplified */}

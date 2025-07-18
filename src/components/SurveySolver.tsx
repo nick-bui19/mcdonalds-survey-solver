@@ -195,11 +195,21 @@ const SurveySolver: React.FC = () => {
 
       <div className="w-full max-w-md bg-white rounded-lg shadow-md p-8">
         <div className="text-center mb-8">
+          <div className="bg-yellow-100 border border-yellow-300 rounded-lg p-3 mb-4">
+            <h2 className="text-sm font-semibold text-yellow-800 mb-1">
+              🎓 Educational Demo Only
+            </h2>
+            <p className="text-xs text-yellow-700">
+              This is a technical demonstration. Real McDonald&apos;s receipts
+              will not work due to advanced bot detection.
+            </p>
+          </div>
+
           <h1 className="text-2xl font-bold text-gray-900 mb-2">
-            Automatically Complete your McDonald&apos;s Survey
+            McDonald&apos;s Survey Automation Demo
           </h1>
           <p className="text-gray-600">
-            Just enter your code - receive your validation code in seconds!
+            Demonstrates automated survey completion with test codes only
           </p>
         </div>
 
@@ -209,34 +219,40 @@ const SurveySolver: React.FC = () => {
           {...(status.status === 'error' && { error: status.statusMessage })}
         />
 
-        {/* Test Mode (Development only) */}
-        {process.env.NODE_ENV === 'development' && (
-          <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <h3 className="text-sm font-semibold text-blue-900 mb-2">
-              🧪 Test Mode
-            </h3>
-            <div className="grid gap-1 text-xs">
-              {TEST_RECEIPT_CODES.slice(0, 3).map((code, index) => (
-                <button
-                  key={index}
-                  onClick={() => {
-                    const event = new CustomEvent('testCodeSelected', {
-                      detail: code,
-                    });
-                    window.dispatchEvent(event);
-                  }}
-                  className="text-left p-2 bg-white rounded border hover:bg-blue-50 font-mono text-blue-700"
-                >
-                  {code}
-                </button>
-              ))}
-            </div>
+        {/* Demo Test Codes - Always visible */}
+        <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <h3 className="text-sm font-semibold text-blue-900 mb-2">
+            🧪 Demo Test Codes
+          </h3>
+          <p className="text-xs text-blue-700 mb-3">
+            Use these fake codes to see the automation demo in action:
+          </p>
+          <div className="grid gap-1 text-xs">
+            {TEST_RECEIPT_CODES.slice(0, 3).map((code, index) => (
+              <button
+                key={index}
+                onClick={() => {
+                  const event = new CustomEvent('testCodeSelected', {
+                    detail: code,
+                  });
+                  window.dispatchEvent(event);
+                }}
+                className="text-left p-2 bg-white rounded border hover:bg-blue-50 font-mono text-blue-700"
+              >
+                {code}
+              </button>
+            ))}
           </div>
-        )}
+        </div>
 
-        <p className="text-xs text-gray-500 text-center mt-6">
-          * Please allow up to 2 minutes for processing
-        </p>
+        <div className="mt-6 text-center">
+          <p className="text-xs text-gray-500 mb-2">
+            * Demo processing takes ~5 seconds
+          </p>
+          <p className="text-xs text-red-500">
+            ⚠️ Real McDonald&apos;s receipts will not work
+          </p>
+        </div>
       </div>
     </div>
   );
