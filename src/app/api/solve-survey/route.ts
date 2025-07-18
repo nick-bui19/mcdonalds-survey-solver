@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { validateReceiptCode } from '@/lib/validation';
-import { SurveyAutomation } from '@/lib/survey-automation';
+import { ServerlessSurveyAutomation } from '@/lib/serverless-automation';
 import { TEST_CODES_INFO } from '@/lib/test-codes';
 import type { SolveSurveyRequest, SolveSurveyResponse } from '@/types/api';
 
@@ -64,52 +64,39 @@ export async function POST(request: NextRequest) {
       console.log('Validation code being returned:', result.validationCode);
       console.log('===================');
     } else {
-      // For production/real codes - return helpful message since Playwright won't work in serverless
+      // Real code processing with serverless-compatible automation
       console.log('=== REAL CODE PROCESSING ===');
       console.log('Formatted code:', formattedCode);
       console.log('NODE_ENV:', process.env.NODE_ENV);
       console.log('Timestamp:', new Date().toISOString());
       console.log('==============================');
 
-      // Check if we're in a serverless environment (Vercel)
-      if (process.env.VERCEL || process.env.NODE_ENV === 'production') {
-        console.log(
-          'Production environment detected - Playwright not available'
-        );
+      try {
+        const automation = new ServerlessSurveyAutomation();
+        const startTime = Date.now();
+        result = await automation.solveSurvey(formattedCode);
+        const endTime = Date.now();
+
+        console.log('=== REAL CODE RESULT ===');
+        console.log('Success:', result.success);
+        console.log('Validation code:', result.validationCode);
+        console.log('Processing time (ms):', endTime - startTime);
+        console.log('Expiration date:', result.expirationDate);
+        if (result.error) console.log('Error:', result.error);
+        console.log('Timestamp:', new Date().toISOString());
+        console.log('========================');
+      } catch (error) {
+        console.error('=== AUTOMATION ERROR ===');
+        console.error('Code attempted:', formattedCode);
+        console.error('Error:', error);
+        console.error('Timestamp:', new Date().toISOString());
+        console.error('========================');
+
         result = {
           success: false,
           error:
-            'Survey automation is not available in the deployed version. This feature requires a local environment with browser support. Please run locally or use the test codes provided.',
+            'Survey automation failed. Please try again or check if your receipt code is valid.',
         };
-      } else {
-        // Local development - try to run automation
-        try {
-          const automation = new SurveyAutomation();
-          const startTime = Date.now();
-          result = await automation.solveSurvey(formattedCode);
-          const endTime = Date.now();
-
-          console.log('=== REAL CODE RESULT ===');
-          console.log('Success:', result.success);
-          console.log('Validation code:', result.validationCode);
-          console.log('Processing time (ms):', endTime - startTime);
-          console.log('Expiration date:', result.expirationDate);
-          if (result.error) console.log('Error:', result.error);
-          console.log('Timestamp:', new Date().toISOString());
-          console.log('========================');
-        } catch (error) {
-          console.error('=== AUTOMATION ERROR ===');
-          console.error('Code attempted:', formattedCode);
-          console.error('Error:', error);
-          console.error('Timestamp:', new Date().toISOString());
-          console.error('========================');
-
-          result = {
-            success: false,
-            error:
-              'Browser automation failed. Please ensure Playwright is installed and try again.',
-          };
-        }
       }
     }
 
