@@ -1,0 +1,103 @@
+/* Custom component styles */
+
+/* Receipt Code Input specific styling */
+.receipt-input {
+  @apply text-center font-mono text-lg;
+}
+
+.receipt-input:focus {
+  @apply ring-2 ring-red-500 border-transparent;
+}
+
+/* Progress animations */
+@keyframes pulse-red {
+  0%, 100% {
+    @apply bg-red-600;
+  }
+  50% {
+    @apply bg-red-700;
+  }
+}
+
+.progress-pulse {
+  animation: pulse-red 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Loading spinner custom colors */
+.spinner-red {
+  @apply text-red-600;
+}
+
+/* Button hover effects */
+.btn-primary {
+  @apply bg-red-600 hover:bg-red-700 focus:ring-red-500;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-secondary {
+  @apply bg-yellow-400 hover:bg-yellow-500 focus:ring-yellow-500;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Validation code display */
+.validation-code {
+  @apply font-mono text-3xl font-bold text-red-600 tracking-wider;
+  letter-spacing: 0.25em;
+}
+
+/* Success and error states */
+.success-glow {
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+}
+
+.error-glow {
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+}
+
+/* McDonald's themed colors */
+:root {
+  --mcdonalds-red: #DA291C;
+  --mcdonalds-yellow: #FFC72C;
+  --mcdonalds-dark-red: #BF1E2E;
+  --mcdonalds-light-yellow: #FFD60A;
+}
+
+/* Responsive improvements */
+@media (max-width: 640px) {
+  .receipt-input {
+    @apply text-base;
+  }
+  
+  .validation-code {
+    @apply text-2xl;
+    letter-spacing: 0.15em;
+  }
+}
+
+/* Accessibility improvements */
+.focus-visible:focus-visible {
+  @apply outline-none ring-2 ring-red-500 ring-offset-2;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .btn-primary {
+    @apply border-2 border-white;
+  }
+  
+  .receipt-input {
+    @apply border-2;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .progress-pulse,
+  .animate-spin {
+    animation: none;
+  }
+  
+  * {
+    transition: none !important;
+  }
+}
