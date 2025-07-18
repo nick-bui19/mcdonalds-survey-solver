@@ -1,6 +1,6 @@
 # 🍟 INACTIVE: McDonald's Survey Solver
 
-An attempt at automating McDonald's customer satisfaction surveys and retrieving validation codes for receipt offers.
+An attempt at automating McDonald's customer satisfaction surveys and retrieving validation codes for receipt offers. For educational purposes only.
 
 ## Features
 
