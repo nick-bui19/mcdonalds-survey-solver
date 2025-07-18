@@ -1,4 +1,7 @@
-@import 'tailwindcss';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 @import '../styles/components.css';
 
 :root {
@@ -8,15 +11,6 @@
   --mcdonalds-yellow: #ffc72c;
   --mcdonalds-dark-red: #bf1e2e;
   --mcdonalds-light-yellow: #ffd60a;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  --color-red-600: var(--mcdonalds-red);
-  --color-yellow-400: var(--mcdonalds-yellow);
 }
 
 body {
