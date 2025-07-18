@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Button } from './ui/Button';
-import { copyToClipboard, calculateExpirationDate } from '@/lib/utils';
+import { copyToClipboard } from '@/lib/utils';
 import type { SurveyResult } from '@/types';
 
 interface SurveyResultsProps {

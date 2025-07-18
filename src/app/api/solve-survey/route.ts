@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { validateReceiptCode } from '@/lib/validation';
-import type { SolveSurveyRequest, SolveSurveyResponse, ApiError } from '@/types/api';
+import type { SolveSurveyRequest, SolveSurveyResponse } from '@/types/api';
 
 export async function POST(request: NextRequest) {
   try {

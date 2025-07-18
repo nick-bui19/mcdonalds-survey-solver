@@ -54,7 +54,7 @@ export function copyToClipboard(text: string): Promise<boolean> {
       document.execCommand('copy');
       textArea.remove();
       return Promise.resolve(true);
-    } catch (error) {
+    } catch {
       textArea.remove();
       return Promise.resolve(false);
     }

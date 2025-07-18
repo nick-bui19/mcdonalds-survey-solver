@@ -205,7 +205,7 @@ const SurveySolver: React.FC = () => {
 
         <ReceiptCodeInput
           onSubmit={handleSurveySubmit}
-          isLoading={status.status === 'processing'}
+          isLoading={false}
           error={status.status === 'error' ? status.statusMessage : undefined}
         />
 

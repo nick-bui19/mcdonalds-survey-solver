@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Input } from './ui/Input';
 import { Button } from './ui/Button';
 import { validateReceiptCode, parseReceiptCode } from '@/lib/validation';
@@ -89,7 +89,7 @@ const ReceiptCodeInput: React.FC<ReceiptCodeInputProps> = ({
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = useCallback(() => {
     const fullCode = fields.join('');
     const validation = validateReceiptCode(fullCode);
     
@@ -99,7 +99,7 @@ const ReceiptCodeInput: React.FC<ReceiptCodeInputProps> = ({
     }
     
     onSubmit(validation.formatted || fullCode);
-  };
+  }, [fields, onSubmit]);
 
   const isComplete = fields.every((field, index) => {
     const expectedLength = index === UI_CONFIG.INPUT_FIELDS - 1 
@@ -118,7 +118,7 @@ const ReceiptCodeInput: React.FC<ReceiptCodeInputProps> = ({
 
     document.addEventListener('keypress', handleKeyPress);
     return () => document.removeEventListener('keypress', handleKeyPress);
-  }, [isComplete, isLoading, fields]);
+  }, [isComplete, isLoading, handleSubmit]);
 
   return (
     <div className="w-full max-w-2xl mx-auto">
