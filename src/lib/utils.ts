@@ -15,8 +15,8 @@ export function randomDelay(min: number, max: number): Promise<void> {
 }
 
 export function generateRandomText(templates: string[]): string {
-  const template = templates[Math.floor(Math.random() * templates.length)];
-  return template;
+  const randomIndex = Math.floor(Math.random() * templates.length);
+  return templates[randomIndex] || templates[0] || 'Great experience!';
 }
 
 export function formatTimestamp(date: Date): string {
@@ -38,7 +38,10 @@ export function calculateExpirationDate(daysFromNow: number = 30): string {
 
 export function copyToClipboard(text: string): Promise<boolean> {
   if (navigator.clipboard && window.isSecureContext) {
-    return navigator.clipboard.writeText(text).then(() => true).catch(() => false);
+    return navigator.clipboard
+      .writeText(text)
+      .then(() => true)
+      .catch(() => false);
   } else {
     // Fallback for older browsers
     const textArea = document.createElement('textarea');
@@ -49,7 +52,7 @@ export function copyToClipboard(text: string): Promise<boolean> {
     document.body.appendChild(textArea);
     textArea.focus();
     textArea.select();
-    
+
     try {
       document.execCommand('copy');
       textArea.remove();

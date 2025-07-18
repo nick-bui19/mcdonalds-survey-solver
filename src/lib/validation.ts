@@ -33,7 +33,7 @@ export function validateReceiptCode(code: string): {
 
 export function formatReceiptCode(code: string): string {
   const digitsOnly = code.replace(/\D/g, '');
-  
+
   if (digitsOnly.length !== MCDONALDS_SURVEY_CONFIG.CODE_LENGTH) {
     return code; // Return as-is if not the right length
   }
@@ -44,7 +44,7 @@ export function formatReceiptCode(code: string): string {
 
 export function parseReceiptCode(formattedCode: string): string[] {
   const digitsOnly = formattedCode.replace(/\D/g, '');
-  
+
   return [
     digitsOnly.slice(0, 5),
     digitsOnly.slice(5, 10),

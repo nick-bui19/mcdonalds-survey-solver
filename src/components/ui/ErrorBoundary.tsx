@@ -27,7 +27,7 @@ class ErrorBoundary extends Component<Props, State> {
   }
 
   private handleReset = () => {
-    this.setState({ hasError: false, error: undefined });
+    this.setState({ hasError: false });
   };
 
   public render() {
@@ -43,7 +43,8 @@ class ErrorBoundary extends Component<Props, State> {
               Something went wrong
             </h2>
             <p className="text-gray-600 mb-6">
-              An unexpected error occurred. Please try again or refresh the page.
+              An unexpected error occurred. Please try again or refresh the
+              page.
             </p>
             {this.state.error && (
               <details className="mb-6 text-left">
@@ -56,11 +57,9 @@ class ErrorBoundary extends Component<Props, State> {
               </details>
             )}
             <div className="space-x-4">
-              <Button onClick={this.handleReset}>
-                Try Again
-              </Button>
-              <Button 
-                variant="outline" 
+              <Button onClick={this.handleReset}>Try Again</Button>
+              <Button
+                variant="outline"
                 onClick={() => window.location.reload()}
               >
                 Refresh Page

@@ -12,10 +12,10 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
   progress,
   className,
   showPercentage = false,
-  size = 'md'
+  size = 'md',
 }) => {
   const clampedProgress = Math.min(Math.max(progress, 0), 100);
-  
+
   const sizeClasses = {
     sm: 'h-2',
     md: 'h-3',
@@ -24,10 +24,12 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
 
   return (
     <div className={cn('w-full', className)}>
-      <div className={cn(
-        'w-full bg-gray-200 rounded-full overflow-hidden',
-        sizeClasses[size]
-      )}>
+      <div
+        className={cn(
+          'w-full bg-gray-200 rounded-full overflow-hidden',
+          sizeClasses[size]
+        )}
+      >
         <div
           className="h-full bg-red-600 transition-all duration-300 ease-out"
           style={{ width: `${clampedProgress}%` }}

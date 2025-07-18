@@ -6,9 +6,9 @@ interface LoadingSpinnerProps {
   className?: string;
 }
 
-const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({ 
-  size = 'md', 
-  className 
+const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
+  size = 'md',
+  className,
 }) => {
   const sizeClasses = {
     sm: 'h-4 w-4',
@@ -19,10 +19,7 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   return (
     <div className={cn('flex items-center justify-center', className)}>
       <svg
-        className={cn(
-          'animate-spin text-red-600',
-          sizeClasses[size]
-        )}
+        className={cn('animate-spin text-red-600', sizeClasses[size])}
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"

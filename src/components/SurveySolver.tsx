@@ -6,6 +6,7 @@ import { SurveyResults } from './SurveyResults';
 import { ErrorMessage } from './ErrorMessage';
 import { ProgressBar } from './ui/ProgressBar';
 import { LoadingSpinner } from './ui/LoadingSpinner';
+import { TEST_RECEIPT_CODES, getRandomTestCode } from '@/lib/test-codes';
 import type { SurveyStatus, SurveyResult } from '@/types';
 
 const PROGRESS_STEPS = [
@@ -27,26 +28,28 @@ const SurveySolver: React.FC = () => {
   const [currentReceiptCode, setCurrentReceiptCode] = useState<string>('');
 
   const simulateProgress = () => {
-    return new Promise<void>((resolve) => {
+    return new Promise<void>(resolve => {
       let stepIndex = 0;
-      
+
       const updateProgress = () => {
         if (stepIndex < PROGRESS_STEPS.length) {
           const step = PROGRESS_STEPS[stepIndex];
-          setStatus(prev => ({
-            ...prev,
-            progress: step.progress,
-            statusMessage: step.message,
-            currentStep: step.message,
-          }));
-          
+          if (step) {
+            setStatus(prev => ({
+              ...prev,
+              progress: step.progress,
+              statusMessage: step.message,
+              currentStep: step.message,
+            }));
+          }
+
           stepIndex++;
           setTimeout(updateProgress, 1000 + Math.random() * 1000); // 1-2 seconds per step
         } else {
           resolve();
         }
       };
-      
+
       updateProgress();
     });
   };
@@ -63,7 +66,7 @@ const SurveySolver: React.FC = () => {
     try {
       // Start progress simulation
       const progressPromise = simulateProgress();
-      
+
       // Make API call
       const response = await fetch('/api/solve-survey', {
         method: 'POST',
@@ -102,7 +105,8 @@ const SurveySolver: React.FC = () => {
       });
       setResult({
         success: false,
-        error: 'Unable to connect to the survey service. Please check your internet connection and try again.',
+        error:
+          'Unable to connect to the survey service. Please check your internet connection and try again.',
       });
     }
   };
@@ -156,24 +160,23 @@ const SurveySolver: React.FC = () => {
           <h2 className="text-2xl font-bold text-gray-900 mb-2">
             Solving Your Survey
           </h2>
-          
+
           <p className="text-gray-600 mb-6">
-            Please wait while we automatically complete your McDonald&apos;s survey...
+            Please wait while we automatically complete your McDonald&apos;s
+            survey...
           </p>
 
           {/* Progress Bar */}
           <div className="mb-4">
-            <ProgressBar 
-              progress={status.progress} 
+            <ProgressBar
+              progress={status.progress}
               showPercentage={true}
               size="lg"
             />
           </div>
 
           {/* Current Step */}
-          <p className="text-sm text-gray-500 mb-6">
-            {status.statusMessage}
-          </p>
+          <p className="text-sm text-gray-500 mb-6">{status.statusMessage}</p>
 
           {/* Estimated Time */}
           <div className="bg-blue-50 rounded-lg p-4">
@@ -194,24 +197,66 @@ const SurveySolver: React.FC = () => {
     <div className="p-8">
       <div className="max-w-2xl mx-auto">
         <div className="text-center mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">
             Get Your Validation Code
           </h2>
-          <p className="text-gray-600">
-            Enter your McDonald&apos;s receipt code below and we&apos;ll automatically 
-            complete the survey to get your validation code for the offer.
+          <p className="text-lg text-gray-600">
+            Enter your McDonald&apos;s receipt code below and we&apos;ll
+            automatically complete the survey to get your validation code for
+            the offer.
           </p>
         </div>
 
         <ReceiptCodeInput
           onSubmit={handleSurveySubmit}
           isLoading={false}
-          error={status.status === 'error' ? status.statusMessage : undefined}
+          {...(status.status === 'error' && { error: status.statusMessage })}
         />
+
+        {/* Test Mode (Development only) */}
+        {process.env.NODE_ENV === 'development' && (
+          <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <h3 className="text-lg font-semibold text-blue-900 mb-3">
+              🧪 Test Mode (Development)
+            </h3>
+            <p className="text-sm text-blue-800 mb-3">
+              Try these fake receipt codes for testing:
+            </p>
+            <div className="grid gap-2 text-sm">
+              {TEST_RECEIPT_CODES.slice(0, 3).map((code, index) => (
+                <button
+                  key={index}
+                  onClick={() => {
+                    // Auto-fill the test code
+                    const event = new CustomEvent('testCodeSelected', {
+                      detail: code,
+                    });
+                    window.dispatchEvent(event);
+                  }}
+                  className="text-left p-2 bg-white rounded border hover:bg-blue-50 font-mono text-blue-700"
+                >
+                  {code}
+                </button>
+              ))}
+            </div>
+            <button
+              onClick={() => {
+                const code = getRandomTestCode();
+                const event = new CustomEvent('testCodeSelected', {
+                  detail: code,
+                });
+                window.dispatchEvent(event);
+              }}
+              className="mt-3 text-sm text-blue-600 hover:text-blue-800 underline"
+            >
+              Use Random Test Code
+            </button>
+          </div>
+        )}
 
         {/* How it works */}
         <div className="mt-12 bg-gray-50 rounded-lg p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          <h3 className="text-xl font-semibold text-gray-900 mb-4">
             How it works
           </h3>
           <div className="grid gap-4 sm:grid-cols-3">
@@ -219,7 +264,7 @@ const SurveySolver: React.FC = () => {
               <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-2">
                 <span className="text-red-600 font-bold">1</span>
               </div>
-              <p className="text-sm text-gray-600">
+              <p className="text-base text-gray-600">
                 Enter your 26-digit receipt code
               </p>
             </div>
@@ -227,7 +272,7 @@ const SurveySolver: React.FC = () => {
               <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-2">
                 <span className="text-red-600 font-bold">2</span>
               </div>
-              <p className="text-sm text-gray-600">
+              <p className="text-base text-gray-600">
                 We automatically complete the survey
               </p>
             </div>
@@ -235,7 +280,7 @@ const SurveySolver: React.FC = () => {
               <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-2">
                 <span className="text-red-600 font-bold">3</span>
               </div>
-              <p className="text-sm text-gray-600">
+              <p className="text-base text-gray-600">
                 Get your validation code instantly
               </p>
             </div>

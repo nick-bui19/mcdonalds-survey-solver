@@ -20,10 +20,12 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           {...props}
         />
         {helperText && (
-          <p className={cn(
-            'mt-1 text-sm',
-            error ? 'text-red-600' : 'text-gray-500'
-          )}>
+          <p
+            className={cn(
+              'mt-1 text-sm',
+              error ? 'text-red-600' : 'text-gray-500'
+            )}
+          >
             {helperText}
           </p>
         )}

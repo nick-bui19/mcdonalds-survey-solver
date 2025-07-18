@@ -25,7 +25,8 @@ export const UI_CONFIG = {
 export const AUTOMATION_CONFIG = {
   HEADLESS: true,
   VIEWPORT: { width: 1920, height: 1080 },
-  USER_AGENT: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+  USER_AGENT:
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
   NAVIGATION_TIMEOUT: 30000,
   ACTION_DELAY: { min: 500, max: 2000 },
 } as const;
@@ -35,6 +36,7 @@ export const SELECTORS = {
   LANGUAGE_SELECT: 'select[name="JavaScriptTest"], #languageSelect',
   SUBMIT_BUTTON: 'input[type="submit"], button[type="submit"], .btn-submit',
   NEXT_BUTTON: 'input[value="Next"], button:contains("Next"), .next-btn',
-  RATING_INPUTS: 'input[type="radio"][value="5"], input[type="radio"][value="Highly Satisfied"]',
+  RATING_INPUTS:
+    'input[type="radio"][value="5"], input[type="radio"][value="Highly Satisfied"]',
   VALIDATION_CODE: '.validation-code, #validationCode, .offer-code',
 } as const;

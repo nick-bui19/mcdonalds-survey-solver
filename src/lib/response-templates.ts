@@ -9,7 +9,7 @@ export const POSITIVE_RESPONSES = {
     'Clean restaurant and quick service.',
     'Staff was very helpful and polite.',
   ],
-  
+
   FOOD_QUALITY: [
     'Food was hot and fresh.',
     'Great taste and quality.',
@@ -18,7 +18,7 @@ export const POSITIVE_RESPONSES = {
     'Fresh ingredients and great flavor.',
     'Food was exactly what I ordered.',
   ],
-  
+
   SERVICE_QUALITY: [
     'Staff was friendly and efficient.',
     'Quick and accurate service.',
@@ -27,28 +27,28 @@ export const POSITIVE_RESPONSES = {
     'Service with a smile.',
     'Staff went above and beyond.',
   ],
-  
+
   CLEANLINESS: [
     'Restaurant was very clean.',
     'Dining area was well-maintained.',
     'Clean facilities throughout.',
     'Spotless and organized.',
   ],
-  
+
   VALUE: [
     'Great value for the price.',
     'Reasonable prices for quality food.',
     'Good portion sizes.',
     'Fair pricing.',
   ],
-  
+
   LIKELIHOOD_TO_RETURN: [
     'Definitely will return.',
     'Would recommend to others.',
     'Will be back soon.',
     'Great place to visit.',
   ],
-  
+
   IMPROVEMENT_SUGGESTIONS: [
     'Everything was perfect.',
     'No suggestions - keep up the great work!',
@@ -67,7 +67,10 @@ export const RATING_RESPONSES = {
   DEFINITELY: 'Definitely',
 } as const;
 
-export function getRandomResponse(category: keyof typeof POSITIVE_RESPONSES): string {
+export function getRandomResponse(
+  category: keyof typeof POSITIVE_RESPONSES
+): string {
   const responses = POSITIVE_RESPONSES[category];
-  return responses[Math.floor(Math.random() * responses.length)];
+  const randomIndex = Math.floor(Math.random() * responses.length);
+  return responses[randomIndex] || responses[0] || 'Great experience!';
 }

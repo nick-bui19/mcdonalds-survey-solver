@@ -69,7 +69,8 @@ export function useSurveySolver(): UseSurveySolverReturn {
       });
       setResult({
         success: false,
-        error: 'Unable to connect to the survey service. Please check your internet connection and try again.',
+        error:
+          'Unable to connect to the survey service. Please check your internet connection and try again.',
       });
     }
   }, []);

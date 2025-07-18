@@ -11,11 +11,12 @@
 
 /* Progress animations */
 @keyframes pulse-red {
-  0%, 100% {
-    background-color: #DA291C;
+  0%,
+  100% {
+    background-color: #da291c;
   }
   50% {
-    background-color: #BF1E2E;
+    background-color: #bf1e2e;
   }
 }
 
@@ -56,10 +57,10 @@
 
 /* McDonald's themed colors */
 :root {
-  --mcdonalds-red: #DA291C;
-  --mcdonalds-yellow: #FFC72C;
-  --mcdonalds-dark-red: #BF1E2E;
-  --mcdonalds-light-yellow: #FFD60A;
+  --mcdonalds-red: #da291c;
+  --mcdonalds-yellow: #ffc72c;
+  --mcdonalds-dark-red: #bf1e2e;
+  --mcdonalds-light-yellow: #ffd60a;
 }
 
 /* Responsive improvements */
@@ -67,7 +68,7 @@
   .receipt-input {
     @apply text-base;
   }
-  
+
   .validation-code {
     @apply text-2xl;
     letter-spacing: 0.15em;
@@ -84,7 +85,7 @@
   .btn-primary {
     @apply border-2 border-white;
   }
-  
+
   .receipt-input {
     @apply border-2;
   }
@@ -96,7 +97,7 @@
   .animate-spin {
     animation: none;
   }
-  
+
   * {
     transition: none !important;
   }

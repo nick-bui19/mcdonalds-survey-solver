@@ -7,7 +7,12 @@ export interface SurveyQuestion {
 }
 
 export interface ResponseStrategy {
-  type: 'highest-rating' | 'positive-choice' | 'random-positive-text' | 'yes' | 'selected-options';
+  type:
+    | 'highest-rating'
+    | 'positive-choice'
+    | 'random-positive-text'
+    | 'yes'
+    | 'selected-options';
   value?: string | string[];
   textTemplates?: string[];
 }

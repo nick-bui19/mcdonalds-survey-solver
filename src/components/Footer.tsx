@@ -11,9 +11,10 @@ const Footer: React.FC = () => {
               Important Disclaimer
             </p>
             <p className="text-xs text-yellow-700">
-              This tool is not affiliated with McDonald&apos;s Corporation. 
-              Use at your own risk and responsibility. Respect McDonald&apos;s terms of service 
-              (maximum 5 surveys per month per location). For educational and personal use only.
+              This tool is not affiliated with McDonald&apos;s Corporation. Use
+              at your own risk and responsibility. Respect McDonald&apos;s terms
+              of service (maximum 5 surveys per month per location). For
+              educational and personal use only.
             </p>
           </div>
 
@@ -52,7 +53,8 @@ const Footer: React.FC = () => {
           {/* Copyright */}
           <div className="pt-4 border-t border-gray-200">
             <p className="text-xs text-gray-400">
-              Made for educational purposes • Not affiliated with McDonald&apos;s Corporation
+              Made for educational purposes • Not affiliated with
+              McDonald&apos;s Corporation
             </p>
           </div>
         </div>
