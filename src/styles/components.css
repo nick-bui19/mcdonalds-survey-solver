@@ -12,10 +12,10 @@
 /* Progress animations */
 @keyframes pulse-red {
   0%, 100% {
-    @apply bg-red-600;
+    background-color: #DA291C;
   }
   50% {
-    @apply bg-red-700;
+    background-color: #BF1E2E;
   }
 }
 

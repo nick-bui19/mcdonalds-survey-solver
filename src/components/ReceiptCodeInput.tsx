@@ -130,7 +130,9 @@ const ReceiptCodeInput: React.FC<ReceiptCodeInputProps> = ({
           {fields.map((field, index) => (
             <React.Fragment key={index}>
               <Input
-                ref={(el) => (inputRefs.current[index] = el)}
+                ref={(el) => {
+                  inputRefs.current[index] = el;
+                }}
                 type="text"
                 inputMode="numeric"
                 value={field}
