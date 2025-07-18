@@ -68,6 +68,7 @@ EXPOSE 3000
 # Set environment to production
 ENV NODE_ENV=production
 ENV PORT=3000
+ENV RAILWAY_ENVIRONMENT_NAME=production
 
 # Start the application
-CMD ["sh", "-c", "npm start -- --port ${PORT:-3000}"]
+CMD ["npm", "start"]

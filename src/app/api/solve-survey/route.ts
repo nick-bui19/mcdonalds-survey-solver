@@ -71,34 +71,52 @@ export async function POST(request: NextRequest) {
       console.log('Timestamp:', new Date().toISOString());
       console.log('==============================');
 
-      const automation = new SurveyAutomation();
+      // Check if we're in a container environment where Playwright should work
+      const isContainerEnv =
+        process.env.RAILWAY_ENVIRONMENT_NAME ||
+        process.env.RENDER ||
+        process.env.DOCKER;
 
-      try {
-        await automation.initialize();
-        const automationResult = await automation.solveSurvey(formattedCode);
-
-        if (automationResult.success) {
-          result = {
-            success: true,
-            validationCode: automationResult.validationCode,
-            expirationDate: automationResult.expirationDate,
-            completionTime: automationResult.completionTime,
-          };
-        } else {
-          result = {
-            success: false,
-            error: automationResult.error || 'Survey automation failed',
-          };
-        }
-      } catch (error) {
-        console.error('Automation error:', error);
+      if (!isContainerEnv) {
+        console.log(
+          'Not in container environment, falling back to manual instruction'
+        );
         result = {
           success: false,
-          error:
-            'Survey automation failed. Please try again or visit mcdvoice.com manually.',
+          error: `Real receipt codes require a container environment. Please visit mcdvoice.com manually with code: ${formattedCode}`,
         };
-      } finally {
-        await automation.cleanup();
+      } else {
+        const automation = new SurveyAutomation();
+
+        try {
+          console.log('Initializing Playwright in container...');
+          await automation.initialize();
+
+          console.log('Starting survey automation...');
+          const automationResult = await automation.solveSurvey(formattedCode);
+
+          if (automationResult.success) {
+            result = {
+              success: true,
+              validationCode: automationResult.validationCode,
+              expirationDate: automationResult.expirationDate,
+              completionTime: automationResult.completionTime,
+            };
+          } else {
+            result = {
+              success: false,
+              error: automationResult.error || 'Survey automation failed',
+            };
+          }
+        } catch (error) {
+          console.error('Automation error:', error);
+          result = {
+            success: false,
+            error: `Survey automation failed: ${error instanceof Error ? error.message : 'Unknown error'}. Please try again or visit mcdvoice.com manually.`,
+          };
+        } finally {
+          await automation.cleanup();
+        }
       }
     }
 
