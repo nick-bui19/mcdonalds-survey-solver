@@ -27,8 +27,8 @@ export async function POST(request: NextRequest) {
 
     let result;
 
-    if (isTestCode && process.env.NODE_ENV === 'development') {
-      // Use mock result for test codes in development
+    if (isTestCode) {
+      // Use mock result for test codes (works in all environments for demo)
       const testInfo =
         TEST_CODES_INFO[formattedCode as keyof typeof TEST_CODES_INFO];
 
@@ -83,7 +83,7 @@ export async function POST(request: NextRequest) {
         );
         result = {
           success: false,
-          error: `Real receipt codes require a container environment. Please visit mcdvoice.com manually with code: ${formattedCode}`,
+          error: `❌ Real receipt codes are not supported on Vercel's serverless platform due to browser automation limitations. Vercel functions cannot run Playwright/Chrome browsers required for McDonald's survey automation. Please use the demo test codes above or visit mcdvoice.com manually with code: ${formattedCode}`,
         };
       } else {
         const automation = new SurveyAutomation();
