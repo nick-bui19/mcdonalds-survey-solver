@@ -1,11 +1,8 @@
 'use client';
 
-import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Input } from './ui/Input';
+import React, { useState, useEffect } from 'react';
 import { Button } from './ui/Button';
-import { validateReceiptCode, parseReceiptCode } from '@/lib/validation';
-import { UI_CONFIG } from '@/lib/constants';
-import { cn } from '@/lib/utils';
+import { validateReceiptCode } from '@/lib/validation';
 
 interface ReceiptCodeInputProps {
   onSubmit: (code: string) => void;
@@ -18,127 +15,43 @@ const ReceiptCodeInput: React.FC<ReceiptCodeInputProps> = ({
   isLoading = false,
   error,
 }) => {
-  const [fields, setFields] = useState<string[]>(
-    Array(UI_CONFIG.INPUT_FIELDS).fill('')
-  );
+  const [receiptCode, setReceiptCode] = useState('');
   const [validationError, setValidationError] = useState<string>('');
-  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
-  const handleFieldChange = (index: number, value: string) => {
-    // Only allow digits
-    const digitsOnly = value.replace(/\D/g, '');
-
-    // Determine max length for this field
-    const maxLength =
-      index === UI_CONFIG.INPUT_FIELDS - 1
-        ? UI_CONFIG.LAST_FIELD_DIGITS
-        : UI_CONFIG.DIGITS_PER_FIELD;
-
-    // Limit to max length
-    const limitedValue = digitsOnly.slice(0, maxLength);
-
-    // Update the field
-    const newFields = [...fields];
-    newFields[index] = limitedValue;
-    setFields(newFields);
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    // Allow digits and dashes only
+    const formatted = value.replace(/[^0-9-]/g, '');
+    setReceiptCode(formatted);
 
     // Clear validation error when user starts typing
-    if (validationError) {
+    if (validationError || error) {
       setValidationError('');
     }
-
-    // Auto-advance to next field if current field is full
-    if (
-      limitedValue.length === maxLength &&
-      index < UI_CONFIG.INPUT_FIELDS - 1
-    ) {
-      const nextInput = inputRefs.current[index + 1];
-      if (nextInput) {
-        nextInput.focus();
-      }
-    }
   };
 
-  const handleKeyDown = (
-    index: number,
-    e: React.KeyboardEvent<HTMLInputElement>
-  ) => {
-    // Handle backspace to move to previous field
-    if (e.key === 'Backspace' && fields[index] === '' && index > 0) {
-      const prevInput = inputRefs.current[index - 1];
-      if (prevInput) {
-        prevInput.focus();
-      }
-    }
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
 
-    // Handle paste
-    if (e.key === 'v' && (e.ctrlKey || e.metaKey)) {
-      e.preventDefault();
-      handlePaste();
-    }
-  };
-
-  const handlePaste = async () => {
-    try {
-      const text = await navigator.clipboard.readText();
-      const digitsOnly = text.replace(/\D/g, '');
-
-      if (digitsOnly.length === 26) {
-        const parsedFields = parseReceiptCode(digitsOnly);
-        setFields(parsedFields);
-
-        // Focus the last field
-        const lastInput = inputRefs.current[UI_CONFIG.INPUT_FIELDS - 1];
-        if (lastInput) {
-          lastInput.focus();
-        }
-      }
-    } catch (error) {
-      console.warn('Failed to read clipboard:', error);
-    }
-  };
-
-  const handleSubmit = useCallback(() => {
-    const fullCode = fields.join('');
-    const validation = validateReceiptCode(fullCode);
-
-    if (!validation.isValid) {
-      setValidationError(validation.error || 'Invalid receipt code');
+    if (!receiptCode.trim()) {
+      setValidationError('Please enter your receipt code');
       return;
     }
 
-    onSubmit(validation.formatted || fullCode);
-  }, [fields, onSubmit]);
+    const validation = validateReceiptCode(receiptCode);
+    if (!validation.isValid) {
+      setValidationError(validation.error || 'Invalid receipt code format');
+      return;
+    }
 
-  const isComplete = fields.every((field, index) => {
-    const expectedLength =
-      index === UI_CONFIG.INPUT_FIELDS - 1
-        ? UI_CONFIG.LAST_FIELD_DIGITS
-        : UI_CONFIG.DIGITS_PER_FIELD;
-    return field.length === expectedLength;
-  });
-
-  // Handle Enter key submission
-  useEffect(() => {
-    const handleKeyPress = (e: KeyboardEvent) => {
-      if (e.key === 'Enter' && isComplete && !isLoading) {
-        handleSubmit();
-      }
-    };
-
-    document.addEventListener('keypress', handleKeyPress);
-    return () => document.removeEventListener('keypress', handleKeyPress);
-  }, [isComplete, isLoading, handleSubmit]);
+    onSubmit(validation.formatted || receiptCode);
+  };
 
   // Handle test code auto-fill (development only)
   useEffect(() => {
     const handleTestCode = (e: CustomEvent) => {
       const testCode = e.detail;
-      const digitsOnly = testCode.replace(/\D/g, '');
-      if (digitsOnly.length === 26) {
-        const parsedFields = parseReceiptCode(digitsOnly);
-        setFields(parsedFields);
-      }
+      setReceiptCode(testCode);
     };
 
     window.addEventListener(
@@ -153,78 +66,44 @@ const ReceiptCodeInput: React.FC<ReceiptCodeInputProps> = ({
   }, []);
 
   return (
-    <div className="w-full max-w-2xl mx-auto">
-      <div className="mb-4">
-        <label className="block text-lg font-medium text-gray-700 mb-3">
-          Enter your 26-digit McDonald&apos;s receipt code
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div>
+        <label
+          htmlFor="receiptCode"
+          className="block text-sm font-medium text-gray-700 mb-2"
+        >
+          Survey Code
         </label>
-        <div className="flex items-center gap-2 justify-center flex-wrap">
-          {fields.map((field, index) => (
-            <React.Fragment key={index}>
-              <Input
-                ref={el => {
-                  inputRefs.current[index] = el;
-                }}
-                type="text"
-                inputMode="numeric"
-                value={field}
-                onChange={e => handleFieldChange(index, e.target.value)}
-                onKeyDown={e => handleKeyDown(index, e)}
-                className={cn(
-                  'text-center font-mono text-xl',
-                  index === UI_CONFIG.INPUT_FIELDS - 1 ? 'w-14' : 'w-24'
-                )}
-                maxLength={
-                  index === UI_CONFIG.INPUT_FIELDS - 1
-                    ? UI_CONFIG.LAST_FIELD_DIGITS
-                    : UI_CONFIG.DIGITS_PER_FIELD
-                }
-                placeholder={
-                  index === UI_CONFIG.INPUT_FIELDS - 1 ? 'X' : 'XXXXX'
-                }
-                disabled={isLoading}
-                error={!!(validationError || error)}
-              />
-              {index < UI_CONFIG.INPUT_FIELDS - 1 && (
-                <span className="text-gray-400 font-mono text-xl">-</span>
-              )}
-            </React.Fragment>
-          ))}
-        </div>
-        <p className="mt-2 text-base text-gray-500 text-center">
-          Format: xxxxx-xxxxx-xxxxx-xxxxx-xxxxx-x
+        <input
+          id="receiptCode"
+          type="text"
+          value={receiptCode}
+          onChange={handleChange}
+          placeholder="Enter your 26-digit survey code"
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-lg font-mono"
+          disabled={isLoading}
+          maxLength={31} // 26 digits + 5 dashes
+        />
+        <p className="text-xs text-gray-500 mt-1">
+          Found at the bottom of your receipt (26 digits)
         </p>
       </div>
 
       {(validationError || error) && (
-        <div className="mb-4 text-center">
-          <p className="text-base text-red-600">{validationError || error}</p>
+        <div className="text-center">
+          <p className="text-sm text-red-600">{validationError || error}</p>
         </div>
       )}
 
-      <div className="text-center">
-        <Button
-          onClick={handleSubmit}
-          disabled={!isComplete || isLoading}
-          isLoading={isLoading}
-          size="lg"
-          className="w-full sm:w-auto min-w-48"
-        >
-          {isLoading ? 'Solving Survey...' : 'Solve Survey'}
-        </Button>
-      </div>
-
-      <div className="mt-4 text-center">
-        <button
-          type="button"
-          onClick={handlePaste}
-          className="text-base text-blue-600 hover:text-blue-800 underline"
-          disabled={isLoading}
-        >
-          Paste code from clipboard
-        </button>
-      </div>
-    </div>
+      <Button
+        type="submit"
+        disabled={!receiptCode.trim() || isLoading}
+        isLoading={isLoading}
+        className="w-full bg-red-600 hover:bg-red-700 text-white py-3 text-lg font-medium"
+      >
+        {isLoading ? 'Processing Survey...' : 'Submit Survey'}
+      </Button>
+    </form>
   );
 };
 

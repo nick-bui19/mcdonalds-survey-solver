@@ -2,11 +2,11 @@
 
 import React, { useState } from 'react';
 import { ReceiptCodeInput } from './ReceiptCodeInput';
-import { SurveyResults } from './SurveyResults';
+import { OfficialCompletionPage } from './OfficialCompletionPage';
 import { ErrorMessage } from './ErrorMessage';
 import { ProgressBar } from './ui/ProgressBar';
 import { LoadingSpinner } from './ui/LoadingSpinner';
-import { TEST_RECEIPT_CODES, getRandomTestCode } from '@/lib/test-codes';
+import { TEST_RECEIPT_CODES } from '@/lib/test-codes';
 import type { SurveyStatus, SurveyResult } from '@/types';
 
 const PROGRESS_STEPS = [
@@ -133,8 +133,13 @@ const SurveySolver: React.FC = () => {
 
   // Show results if we have them (success or error)
   if (result) {
-    if (result.success) {
-      return <SurveyResults result={result} onNewSurvey={handleNewSurvey} />;
+    if (result.success && result.validationCode) {
+      return (
+        <OfficialCompletionPage
+          validationCode={result.validationCode}
+          onStartOver={handleNewSurvey}
+        />
+      );
     } else {
       return (
         <ErrorMessage
@@ -146,27 +151,26 @@ const SurveySolver: React.FC = () => {
     }
   }
 
-  // Show processing state
+  // Show processing state - McDonald's style
   if (status.status === 'processing') {
     return (
-      <div className="text-center p-8">
-        <div className="max-w-md mx-auto">
-          {/* Processing Icon */}
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+        {/* Red Header Bar */}
+        <div className="absolute top-0 left-0 right-0 h-2 bg-red-600"></div>
+
+        <div className="w-full max-w-md bg-white rounded-lg shadow-md p-8 text-center">
           <div className="w-16 h-16 mx-auto mb-6">
             <LoadingSpinner size="lg" />
           </div>
 
-          {/* Status Message */}
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
-            Solving Your Survey
+          <h2 className="text-xl font-bold text-gray-900 mb-2">
+            Processing Your Survey
           </h2>
 
           <p className="text-gray-600 mb-6">
-            Please wait while we automatically complete your McDonald&apos;s
-            survey...
+            Please wait while we complete your survey...
           </p>
 
-          {/* Progress Bar */}
           <div className="mb-4">
             <ProgressBar
               progress={status.progress}
@@ -175,35 +179,27 @@ const SurveySolver: React.FC = () => {
             />
           </div>
 
-          {/* Current Step */}
           <p className="text-sm text-gray-500 mb-6">{status.statusMessage}</p>
 
-          {/* Estimated Time */}
-          <div className="bg-blue-50 rounded-lg p-4">
-            <p className="text-sm text-blue-800">
-              <strong>Estimated time:</strong> 60-120 seconds
-            </p>
-            <p className="text-xs text-blue-600 mt-1">
-              Do not close this tab while the survey is being processed
-            </p>
-          </div>
+          <p className="text-xs text-gray-500">* Do not close this window</p>
         </div>
       </div>
     );
   }
 
-  // Show input form (idle state)
+  // Show input form (idle state) - Simplified Panda Express style
   return (
-    <div className="p-8">
-      <div className="max-w-2xl mx-auto">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      {/* Red Header Bar */}
+      <div className="absolute top-0 left-0 right-0 h-2 bg-red-600"></div>
+
+      <div className="w-full max-w-md bg-white rounded-lg shadow-md p-8">
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
-            Get Your Validation Code
-          </h2>
-          <p className="text-lg text-gray-600">
-            Enter your McDonald&apos;s receipt code below and we&apos;ll
-            automatically complete the survey to get your validation code for
-            the offer.
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">
+            Automatically Complete your McDonald&apos;s Survey
+          </h1>
+          <p className="text-gray-600">
+            Just enter your code - receive your validation code in seconds!
           </p>
         </div>
 
@@ -215,19 +211,15 @@ const SurveySolver: React.FC = () => {
 
         {/* Test Mode (Development only) */}
         {process.env.NODE_ENV === 'development' && (
-          <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <h3 className="text-lg font-semibold text-blue-900 mb-3">
-              🧪 Test Mode (Development)
+          <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <h3 className="text-sm font-semibold text-blue-900 mb-2">
+              🧪 Test Mode
             </h3>
-            <p className="text-sm text-blue-800 mb-3">
-              Try these fake receipt codes for testing:
-            </p>
-            <div className="grid gap-2 text-sm">
+            <div className="grid gap-1 text-xs">
               {TEST_RECEIPT_CODES.slice(0, 3).map((code, index) => (
                 <button
                   key={index}
                   onClick={() => {
-                    // Auto-fill the test code
                     const event = new CustomEvent('testCodeSelected', {
                       detail: code,
                     });
@@ -239,53 +231,12 @@ const SurveySolver: React.FC = () => {
                 </button>
               ))}
             </div>
-            <button
-              onClick={() => {
-                const code = getRandomTestCode();
-                const event = new CustomEvent('testCodeSelected', {
-                  detail: code,
-                });
-                window.dispatchEvent(event);
-              }}
-              className="mt-3 text-sm text-blue-600 hover:text-blue-800 underline"
-            >
-              Use Random Test Code
-            </button>
           </div>
         )}
 
-        {/* How it works */}
-        <div className="mt-12 bg-gray-50 rounded-lg p-6">
-          <h3 className="text-xl font-semibold text-gray-900 mb-4">
-            How it works
-          </h3>
-          <div className="grid gap-4 sm:grid-cols-3">
-            <div className="text-center">
-              <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                <span className="text-red-600 font-bold">1</span>
-              </div>
-              <p className="text-base text-gray-600">
-                Enter your 26-digit receipt code
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                <span className="text-red-600 font-bold">2</span>
-              </div>
-              <p className="text-base text-gray-600">
-                We automatically complete the survey
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                <span className="text-red-600 font-bold">3</span>
-              </div>
-              <p className="text-base text-gray-600">
-                Get your validation code instantly
-              </p>
-            </div>
-          </div>
-        </div>
+        <p className="text-xs text-gray-500 text-center mt-6">
+          * Please allow up to 2 minutes for processing
+        </p>
       </div>
     </div>
   );
